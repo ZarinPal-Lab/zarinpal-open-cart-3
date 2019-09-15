@@ -33,8 +33,8 @@ class ControllerExtensionPaymentZarinpal extends Controller {
         $Description = $this->language->get('text_order_no') . $order_info['order_id']; // Required
         $Email = isset($order_info['email']) ? $order_info['email'] : ''; 	// Optional
         $Mobile = isset($order_info['fax']) ? $order_info['fax'] : $order_info['telephone']; 	// Optional
-        /*$data['order_id'] = $this->encryption->encrypt($this->config->get('config_encryption'), $this->session->data['order_id']);*/
-        $data1['order_id'] = $this->encrypt($this->session->data['order_id']);
+        $data['order_id'] = $this->encryption->encrypt($this->config->get('config_encryption'), $this->session->data['order_id']);
+        //$data1['order_id'] = $this->encrypt($this->session->data['order_id']);
         $CallbackURL = $this->url->link('extension/payment/zarinpal/callback', 'order_id=' . $data1['order_id'], true);  // Required
 
         $data = array('MerchantID' => $MerchantID,
@@ -213,19 +213,6 @@ class ControllerExtensionPaymentZarinpal extends Controller {
         } else {
             return ['Status' => $result['Status']];
         }
-    }
-
-    // Encryption Fumction From 2.3.0.2
-    public function encrypt($value) {
-        $key = $this->config->get('config_encryption');
-        $my_key = hash('sha256', $key, true);
-        return strtr(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, hash('sha256', $my_key, true), $value, MCRYPT_MODE_ECB)), '+/=', '-_,');
-    }
-
-    public function decrypt($value) {
-        $key = $this->config->get('config_encryption');
-        $my_key = hash('sha256', $key, true);
-        return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, hash('sha256', $my_key, true), base64_decode(strtr($value, '-_,', '+/=')), MCRYPT_MODE_ECB));
     }
 
 }
